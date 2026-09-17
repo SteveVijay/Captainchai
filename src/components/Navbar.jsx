@@ -63,9 +63,6 @@ export const Navbar = ({
             <span className="font-wordmark text-2xl tracking-[0.14em] uppercase text-amber-400 group-hover:text-amber-300 transition-colors">
               CHAI
             </span>
-            <span className="text-[10px] font-mono tracking-widest text-stone-300 px-1.5 py-0.5 rounded bg-black/50 border border-stone-800 uppercase hidden sm:inline-block">
-              PANAMUKKU
-            </span>
           </div>
         </button>
 
