@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-wordmark: 'Bebas Neue', sans-serif;
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-cinzel: 'Cinzel', serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: #080605;
+  }
+}
+
+/* Bespoke Logotype / Wordmark */
+.font-wordmark {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.12em;
+}
+
+.font-editorial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.08em;
+}
+
+/* Distressed / Vintage Enamel Signage Wordmark Effect */
+.wordmark-distressed {
+  background-image: linear-gradient(180deg, #FAF4ED 0%, #E8DDD2 60%, #C4B5A5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.9));
+}
+
+.wordmark-amber {
+  background-image: linear-gradient(180deg, #FDE68A 0%, #F59E0B 45%, #D97706 80%, #92400E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.4));
+}
+
+/* Cinematic Dark Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #060404;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a1b12;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #92400e;
+}
+
+/* Analog Film Grain & Soot Textures */
+.bg-film-grain {
+  background-image: radial-gradient(rgba(245, 158, 11, 0.04) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+.bg-soot {
+  background-color: #0A0807;
+  background-image: linear-gradient(180deg, rgba(16, 12, 10, 0.8) 0%, rgba(8, 6, 5, 0.95) 100%);
+}
+
+.bg-stall-warmth {
+  background: radial-gradient(circle at top center, rgba(180, 83, 9, 0.12) 0%, rgba(8, 6, 5, 0.98) 70%);
+}
+
+/* Worn Brass Border Details (Not generic rounded glass) */
+.stall-card {
+  background: linear-gradient(165deg, #130E0B 0%, #0A0706 100%);
+  border: 1px solid rgba(180, 83, 9, 0.22);
+  position: relative;
+}
+
+.stall-card:hover {
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 12px 36px -8px rgba(180, 83, 9, 0.18);
+}
+
+.stall-border-asymmetric {
+  border-left: 2px solid #D97706;
+  border-top: 1px solid rgba(217, 119, 6, 0.2);
+  border-right: 1px solid rgba(50, 35, 25, 0.4);
+  border-bottom: 1px solid rgba(50, 35, 25, 0.4);
+}
+
+/* Glowing Amber Eyes Animation */
+@keyframes eyePulse {
+  0%, 100% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.9)) drop-shadow(0 0 14px rgba(217, 119, 6, 0.6));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(254, 240, 138, 1)) drop-shadow(0 0 22px rgba(245, 158, 11, 0.9));
+  }
+}
+
+.animate-amber-eyes {
+  animation: eyePulse 4.5s ease-in-out infinite;
+}
+
+/* Atmospheric Steam Wisp */
+@keyframes atmosphericSteam {
+  0% {
+    transform: translateY(0) scale(0.9);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.35;
+  }
+  80% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-90px) scale(1.25);
+    opacity: 0;
+  }
+}
+
+.animate-steam-slow {
+  animation: atmosphericSteam 8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
