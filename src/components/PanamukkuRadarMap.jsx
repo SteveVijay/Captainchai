@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Shield, Radio, Eye, AlertTriangle, Zap, CheckCircle2 } from 'lucide-react';
-import { playGlassClink, playSteamWhoosh, playEmergencyDistressPulse } from '../utils/audio';
+import { MapPin, Shield, Radio, Eye, AlertTriangle, Zap, CheckCircle2, RefreshCw } from 'lucide-react';
+import { playGlassClink, playSteamWhoosh, playRadarSweepPing } from '../utils/audio';
 
 const SECTOR_DATA = [
   {
@@ -68,17 +68,37 @@ const SECTOR_DATA = [
 
 export const PanamukkuRadarMap = ({ onOpenSOS }) => {
   const [activeSector, setActiveSector] = useState(SECTOR_DATA[0]);
-  const [sweepTriggered, setSweepTriggered] = useState(false);
+  const [isSweeping, setIsSweeping] = useState(false);
+  const [sweepKey, setSweepKey] = useState(0);
+  const [sweepFeedback, setSweepFeedback] = useState(null);
 
   const handleSelectSector = (sector) => {
     playGlassClink();
     setActiveSector(sector);
-    setSweepTriggered(false);
+    setSweepFeedback(null);
   };
 
   const handleRequestSweep = () => {
-    playSteamWhoosh();
-    setSweepTriggered(true);
+    playRadarSweepPing();
+    setIsSweeping(true);
+    setSweepFeedback(null);
+    setSweepKey((prev) => prev + 1);
+
+    // Play second subtle ping mid-sweep
+    setTimeout(() => {
+      playRadarSweepPing();
+    }, 1100);
+
+    // Complete sweep after 2.4s
+    setTimeout(() => {
+      setIsSweeping(false);
+      setSweepFeedback({
+        sectorId: activeSector.id,
+        sectorName: activeSector.name,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        status: 'ALL CLEAR // ZERO ANOMALIES DETECTED',
+      });
+    }, 2400);
   };
 
   return (
@@ -112,8 +132,8 @@ export const PanamukkuRadarMap = ({ onOpenSOS }) => {
             {/* Tactical Grid Top Bar */}
             <div className="flex items-center justify-between pb-3 border-b border-amber-950/80 mb-4 text-[10px] font-mono text-stone-400">
               <span className="flex items-center space-x-1.5 text-amber-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                <span>GRID FREQUENCY: 142.80 MHz</span>
+                <span className={`w-2 h-2 rounded-full ${isSweeping ? 'bg-amber-400 animate-ping' : 'bg-emerald-500 animate-pulse'}`} />
+                <span>{isSweeping ? 'SCANNING SECTOR FREQUENCY...' : 'GRID FREQUENCY: 142.80 MHz'}</span>
               </span>
               <span>PATROL RANGE: 3.5 KM</span>
             </div>
@@ -121,12 +141,16 @@ export const PanamukkuRadarMap = ({ onOpenSOS }) => {
             {/* Interactive Vector Map Surface */}
             <div className="relative w-full aspect-[4/3] rounded bg-[#060404] border border-amber-950/60 overflow-hidden">
               {/* Radar Grid Lines */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(217,119,6,0.08)_0%,transparent_75%)]" />
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(40,25,18,0.3)_1px,transparent_1px),linear-gradient(to_bottom,rgba(40,25,18,0.3)_1px,transparent_1px)] bg-[size:40px_40px]" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(217,119,6,0.1)_0%,transparent_75%)]" />
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(40,25,18,0.35)_1px,transparent_1px),linear-gradient(to_bottom,rgba(40,25,18,0.35)_1px,transparent_1px)] bg-[size:40px_40px]" />
               
-              {/* Pulsing Radar Rings from Tea Stall (Center Anchor) */}
+              {/* Concentric Radar Distance Rings */}
+              <div className="absolute top-[48%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full border border-amber-500/15 pointer-events-none" />
+              <div className="absolute top-[48%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full border border-amber-500/15 pointer-events-none" />
+              <div className="absolute top-[48%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border border-amber-500/10 pointer-events-none" />
+
+              {/* Pulsing Central Radar Ping from Tea Stall */}
               <div className="absolute top-[48%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full border border-amber-500/20 animate-ping" style={{ animationDuration: '4s' }} />
-              <div className="absolute top-[48%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full border border-amber-500/10 pointer-events-none" />
 
               {/* Roadway Corridors SVG */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40">
@@ -139,6 +163,45 @@ export const PanamukkuRadarMap = ({ onOpenSOS }) => {
                 <line x1="200" y1="180" x2="100" y2="350" stroke="#52321E" strokeWidth="2" />
                 <line x1="200" y1="180" x2="480" y2="360" stroke="#52321E" strokeWidth="2" />
               </svg>
+
+              {/* ACTIVE 360-DEGREE RADAR SWEEP BEAM CONE */}
+              <div
+                className={`absolute inset-0 pointer-events-none origin-center transition-opacity duration-300 ${
+                  isSweeping ? 'opacity-100' : 'opacity-30'
+                }`}
+              >
+                <div
+                  className="w-full h-full animate-spin"
+                  style={{
+                    animationDuration: isSweeping ? '1.2s' : '6s',
+                    background:
+                      'conic-gradient(from 0deg at 50% 48%, rgba(245,158,11,0.3) 0deg, rgba(245,158,11,0.05) 45deg, transparent 90deg, transparent 360deg)',
+                  }}
+                />
+              </div>
+
+              {/* Dynamic Laser Scanline during Active User Sweep */}
+              {isSweeping && (
+                <motion.div
+                  key={sweepKey}
+                  initial={{ top: '0%' }}
+                  animate={{ top: ['0%', '100%', '0%', '100%'] }}
+                  transition={{ duration: 2.4, ease: 'linear' }}
+                  className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_#F59E0B] pointer-events-none z-10"
+                />
+              )}
+
+              {/* Dynamic Sweep Waves centered on Active Sector */}
+              {isSweeping && (
+                <motion.div
+                  key={`pulse-${sweepKey}`}
+                  initial={{ scale: 0.2, opacity: 1 }}
+                  animate={{ scale: 3.5, opacity: 0 }}
+                  transition={{ duration: 1.2, repeat: 1, ease: 'easeOut' }}
+                  style={{ left: `${activeSector.coords.x}%`, top: `${activeSector.coords.y}%` }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full border-2 border-amber-400 pointer-events-none z-15"
+                />
+              )}
 
               {/* Sector Markers */}
               {SECTOR_DATA.map((sec) => {
@@ -178,20 +241,18 @@ export const PanamukkuRadarMap = ({ onOpenSOS }) => {
                 );
               })}
 
-              {/* Sweep Scan Line Animation */}
-              {sweepTriggered && (
-                <motion.div
-                  initial={{ x: '-100%' }}
-                  animate={{ x: '200%' }}
-                  transition={{ duration: 1.2, ease: 'linear' }}
-                  className="absolute inset-y-0 w-32 bg-gradient-to-r from-transparent via-amber-500/30 to-transparent pointer-events-none"
-                />
+              {/* Live Scan Telemetry Inset Box */}
+              {isSweeping && (
+                <div className="absolute bottom-3 right-3 px-3 py-1.5 rounded bg-black/90 border border-amber-500/60 text-[10px] font-mono text-amber-300 flex items-center space-x-2 z-30 shadow-lg animate-pulse">
+                  <RefreshCw size={11} className="animate-spin text-amber-400" />
+                  <span>SWEEPING {activeSector.name.toUpperCase()}...</span>
+                </div>
               )}
             </div>
 
             {/* Bottom Sector Strip */}
             <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-amber-950/60 text-[10px] font-mono text-stone-400">
-              <span className="text-amber-400/90 font-bold">CLICK SECTOR TO INSPECT</span>
+              <span className="text-amber-400/90 font-bold">CLICK ANY SECTOR PIN TO INSPECT</span>
               <span>TAP SOS FOR IMMEDIATE RESPONSE</span>
             </div>
           </div>
@@ -232,22 +293,58 @@ export const PanamukkuRadarMap = ({ onOpenSOS }) => {
                   “{activeSector.recentIncident}”
                 </p>
               </div>
+
+              {/* Sweep Confirmation Badge */}
+              <AnimatePresence>
+                {sweepFeedback && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="p-3.5 rounded bg-emerald-950/30 border border-emerald-800/50 mb-6 flex items-start space-x-2.5"
+                  >
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-wide">
+                        {sweepFeedback.status}
+                      </div>
+                      <div className="text-[10px] font-mono text-stone-400 mt-0.5">
+                        {sweepFeedback.sectorName} verified at {sweepFeedback.timestamp}. Zero kinetic anomalies detected.
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <div className="space-y-3 pt-4 border-t border-amber-950/60">
               {/* Trigger Patrol Sweep Button */}
               <button
                 onClick={handleRequestSweep}
-                className="w-full py-2.5 rounded bg-stone-900 hover:bg-stone-800 border border-amber-900/40 text-amber-300 text-xs font-mono uppercase tracking-wider transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+                disabled={isSweeping}
+                className={`w-full py-2.5 rounded border text-xs font-mono uppercase tracking-wider transition-all flex items-center justify-center space-x-2 cursor-pointer ${
+                  isSweeping
+                    ? 'bg-amber-950/60 border-amber-600 text-amber-300 animate-pulse cursor-wait'
+                    : 'bg-stone-900 hover:bg-stone-800 border-amber-900/50 hover:border-amber-500 text-amber-300'
+                }`}
               >
-                <Eye size={14} />
-                <span>{sweepTriggered ? 'Kinetic Sweep in Progress...' : 'Request Area Patrol Sweep'}</span>
+                {isSweeping ? (
+                  <>
+                    <RefreshCw size={14} className="animate-spin text-amber-400" />
+                    <span>Kinetic Sweep in Progress...</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye size={14} />
+                    <span>{sweepFeedback ? 'Re-run Sector Sweep' : 'Request Area Patrol Sweep'}</span>
+                  </>
+                )}
               </button>
 
               {/* Direct Urgent SOS Button for this sector */}
               <button
                 onClick={onOpenSOS}
-                className="w-full py-3 rounded bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-wordmark text-lg uppercase tracking-wider transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-[0_0_20px_rgba(239,68,68,0.4)]"
+                className="w-full py-3 rounded bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-wordmark text-lg uppercase tracking-wider transition-all flex items-center justify-center space-x-2 cursor-pointer shadow-[0_0_20px_rgba(239,68,68,0.4)] hover:shadow-[0_0_30px_rgba(239,68,68,0.7)]"
               >
                 <Zap size={18} />
                 <span>Trigger Instant SOS in this Sector</span>
@@ -263,3 +360,4 @@ export const PanamukkuRadarMap = ({ onOpenSOS }) => {
 };
 
 export default PanamukkuRadarMap;
+

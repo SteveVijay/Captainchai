@@ -217,3 +217,29 @@ export const playEmergencyDistressPulse = () => {
   flare.start(now);
   flare.stop(now + 0.5);
 };
+
+// 7. Tactical Radar Sonar Sweep
+export const playRadarSweepPing = () => {
+  if (!isSoundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(950, now);
+  osc.frequency.exponentialRampToValueAtTime(1400, now + 0.15);
+  osc.frequency.exponentialRampToValueAtTime(700, now + 0.35);
+
+  gain.gain.setValueAtTime(0.08, now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(now);
+  osc.stop(now + 0.5);
+};
+
