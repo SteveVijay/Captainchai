@@ -40,7 +40,7 @@ const NARRATIVE_BEATS = [
   {
     act: 'ACT VI',
     tag: 'THE DOUBLE LIFE',
-    quote: 'He never learned who took him or why — but he was changed. By day he remained the quiet tea-seller keeping his father\'s stall alive. By night, he became something else.',
+    quote: 'He never learned who took him or why — but he was changed. By day he remained the quiet tea-seller keeping his father\'s stall alive. By night, he became someone else.',
     subtext: 'By day he serves twenty-rupee cups, smiles quietly at town gossip, and wipes down wooden benches. By night, he moves across Panamukku at impossible speeds, preventing tragedy in the shadows, and by dawn he is back behind the stove boiling milk as if nothing happened.',
     homelyDetail: 'Not a single neighbor or regular customer suspects who he becomes when the lamps go out.',
   },
@@ -50,6 +50,13 @@ const NARRATIVE_BEATS = [
     quote: 'The people of Panamukku thank Captain Chai every time he saves someone. None of them have ever thought to thank Kannan, the boy who\'s poured their tea every morning for years.',
     subtext: 'Only his mother suspects something in the weary calm of his eyes when he returns before sunrise, but she simply pours his father’s blend into his glass and never asks.',
     homelyDetail: 'A secret kept in silence over steaming brass and roadside gravel.',
+  },
+  {
+    act: 'ACT VIII',
+    tag: 'THE SEARCH FOR TRUTH, NOT REVENGE',
+    quote: 'He still searches the night shadows for the stranger who took him — not out of vengeance, but for the one question that haunts him: what was the link between the kidnapper and his father?',
+    subtext: 'Kannan is not a vigilante driven by revenge or anger. He knows his father’s recipe was no coincidence — it was an antidote, a stabilizer, or a legacy left behind for a danger his father foresaw. Until he finds the stranger and uncovers the full truth, Kannan stands watch so no one else in Panamukku suffers in the dark.',
+    homelyDetail: 'A quiet pursuit of truth, honoring his father with protection rather than violence.',
   },
 ];
 
@@ -72,7 +79,7 @@ export const OriginStory = () => {
             transition={{ duration: 0.8 }}
             className="inline-flex items-center space-x-2 px-3 py-1 rounded bg-[#160E0A] border border-amber-950 text-amber-400 text-[10px] font-mono tracking-[0.25em] uppercase mb-6"
           >
-            <span>CONFIDENTIAL RECORD // PANAMUKKU</span>
+            <span>CONFIDENTIAL DOSSIER // PANAMUKKU CHRONICLES</span>
           </motion.div>
 
           <motion.h2
@@ -92,7 +99,7 @@ export const OriginStory = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-editorial text-xl sm:text-2xl text-stone-300 italic max-w-xl mx-auto leading-relaxed"
           >
-            An abduction by an unknown stranger, a father's stabilizing recipe, and a double life born from quiet grief.
+            An abduction by an unknown stranger, a father's stabilizing recipe, and a search for truth without vengeance.
           </motion.p>
         </div>
 
@@ -139,7 +146,7 @@ export const OriginStory = () => {
           ))}
         </div>
 
-        {/* Dramatic Irony Climax Card */}
+        {/* Dramatic Narrative Conclusion Card */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -148,13 +155,13 @@ export const OriginStory = () => {
           className="mt-36 p-8 sm:p-12 rounded stall-card stall-border-asymmetric text-left max-w-2xl mx-auto"
         >
           <div className="font-mono text-[10px] tracking-[0.25em] text-amber-500 uppercase mb-3">
-            THE UNNOTICED HERO
+            THE GUARDIAN’S RESOLVE
           </div>
           <p className="font-editorial text-2xl sm:text-3xl text-[#F3ECE4] italic leading-relaxed mb-4">
-            “By dawn, the gravel is swept, the apron is tied around his waist, and the water is brought to a rolling boil. To the town, he is just Kannan.”
+            “He doesn't want vengeance. He wants understanding. To know why his father knew what was coming, and to make sure Panamukku remains safe while he finds the answers.”
           </p>
           <p className="text-stone-300 text-xs font-sans leading-relaxed font-light">
-            He wants no statue. He wants no gratitude. He only wants to ensure that in Panamukku, no family has to wake up to the sudden silence he lived through.
+            Every cup he brews carries the memory of his father. Every night he patrols honors the promise that no innocent life in Panamukku will be abandoned in the dark.
           </p>
         </motion.div>
 
