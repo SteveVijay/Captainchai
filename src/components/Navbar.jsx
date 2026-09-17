@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, VolumeX, Shield, MessageSquare, Radio } from 'lucide-react';
+import { Volume2, VolumeX, Shield, MessageSquare, AlertOctagon, Map, Bell } from 'lucide-react';
 import { playGlassClink } from '../utils/audio';
 
 export const Navbar = ({
   isSoundOn,
   onToggleSound,
   onOpenChat,
+  onOpenSOS,
   onScrollTo,
 }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -22,7 +23,7 @@ export const Navbar = ({
     <header
       className={`fixed top-0 left-0 right-0 z-40 px-6 sm:px-12 py-4 transition-all duration-500 ${
         scrolled
-          ? 'bg-[#080605]/92 backdrop-blur-md border-b border-amber-950/40 py-3 shadow-[0_12px_32px_rgba(0,0,0,0.85)]'
+          ? 'bg-[#080605]/95 backdrop-blur-md border-b border-amber-950/40 py-3 shadow-[0_12px_32px_rgba(0,0,0,0.85)]'
           : 'bg-transparent border-b border-transparent'
       }`}
     >
@@ -69,7 +70,7 @@ export const Navbar = ({
         </button>
 
         {/* Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-7 text-xs uppercase tracking-[0.18em] text-stone-400 font-sans">
+        <nav className="hidden lg:flex items-center space-x-7 text-xs uppercase tracking-[0.18em] text-stone-400 font-sans">
           <button
             onClick={() => {
               playGlassClink();
@@ -95,7 +96,16 @@ export const Navbar = ({
             }}
             className="hover:text-amber-300 transition-colors cursor-pointer"
           >
-            The Stall
+            The Bell & Stall
+          </button>
+          <button
+            onClick={() => {
+              playGlassClink();
+              onScrollTo('map');
+            }}
+            className="hover:text-amber-300 transition-colors cursor-pointer"
+          >
+            Patrol Radar
           </button>
           <button
             onClick={() => {
@@ -104,7 +114,7 @@ export const Navbar = ({
             }}
             className="hover:text-amber-300 transition-colors cursor-pointer flex items-center space-x-1"
           >
-            <span>The Alliance</span>
+            <span>Alliance</span>
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
           </button>
           <button
@@ -114,15 +124,16 @@ export const Navbar = ({
             }}
             className="hover:text-amber-300 transition-colors cursor-pointer"
           >
-            The Watch
+            The Creed
           </button>
         </nav>
 
-        {/* Action Controls & CTA */}
-        <div className="flex items-center space-x-3 sm:space-x-4">
+        {/* Action Controls & Emergency SOS */}
+        <div className="flex items-center space-x-2.5 sm:space-x-3">
+          {/* Sound Toggle */}
           <button
             onClick={onToggleSound}
-            title={isSoundOn ? 'Mute ambient audio' : 'Enable ambient audio'}
+            title={isSoundOn ? 'Mute audio' : 'Enable audio'}
             className="p-2 rounded bg-stone-900/60 border border-stone-800 text-stone-400 hover:text-amber-300 hover:border-amber-700/50 transition-colors cursor-pointer"
           >
             {isSoundOn ? (
@@ -132,12 +143,21 @@ export const Navbar = ({
             )}
           </button>
 
+          {/* ⚡ 1-CLICK EMERGENCY SOS BUTTON */}
+          <button
+            onClick={onOpenSOS}
+            className="px-3 sm:px-4 py-2 rounded bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-wordmark text-sm uppercase tracking-wider shadow-[0_0_20px_rgba(239,68,68,0.4)] hover:shadow-[0_0_30px_rgba(239,68,68,0.7)] cursor-pointer flex items-center space-x-1.5 animate-pulse"
+          >
+            <AlertOctagon size={14} />
+            <span>SOS FLARE</span>
+          </button>
+
+          {/* Standard Reach Captain Button */}
           <button
             onClick={onOpenChat}
-            className="px-4 sm:px-5 py-2 rounded bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-500 text-[#080605] font-sans font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-[0_0_20px_rgba(217,119,6,0.25)] hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] cursor-pointer flex items-center space-x-2"
+            className="hidden sm:flex px-4 py-2 rounded bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-500 text-[#080605] font-sans font-bold text-xs uppercase tracking-wider transition-all duration-200 shadow-[0_0_20px_rgba(217,119,6,0.25)] hover:shadow-[0_0_30px_rgba(245,158,11,0.45)] cursor-pointer items-center space-x-1.5"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#080605] animate-ping opacity-75" />
-            <span>Reach Captain Chai</span>
+            <span>Message</span>
           </button>
         </div>
       </div>

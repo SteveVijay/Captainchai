@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, MessageSquare } from 'lucide-react';
+import { ArrowDown, MessageSquare, AlertOctagon, MapPin } from 'lucide-react';
 import { playSteamWhoosh, playGlassClink } from '../utils/audio';
 import { CaptainSilhouette } from './CaptainSilhouette';
 
@@ -10,7 +10,7 @@ const EVOCATIVE_LINES = [
   "Some debts are paid in tea. Others in vigilance.",
 ];
 
-export const Hero = ({ onOpenChat, onScrollToOrigin }) => {
+export const Hero = ({ onOpenChat, onOpenSOS, onScrollToOrigin }) => {
   const [lineIndex, setLineIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isTypingDone, setIsTypingDone] = useState(false);
@@ -59,7 +59,7 @@ export const Hero = ({ onOpenChat, onScrollToOrigin }) => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className="inline-flex items-center space-x-2.5 px-3 py-1 rounded bg-[#160E0A] border border-amber-900/40 mb-6"
+            className="inline-flex items-center space-x-2.5 px-3 py-1 rounded bg-[#160E0A] border border-amber-950 mb-6"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             <span className="font-mono text-[10px] tracking-[0.25em] text-amber-300/80 uppercase">
@@ -106,32 +106,43 @@ export const Hero = ({ onOpenChat, onScrollToOrigin }) => {
             By day, he tends his late father’s tea stall on the corner of Panamukku. By night, changed by an abduction he cannot remember, he watches over the alleys and highway bypass. Fast, strong, and always where trouble is — gone before anyone can thank him.
           </motion.p>
 
-          {/* Action CTAs */}
+          {/* Action CTAs: Direct Helpline + 1-Click SOS + Story */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.5 }}
-            className="flex flex-wrap items-center gap-4 mb-10"
+            className="flex flex-wrap items-center gap-3.5 mb-10"
           >
+            {/* 1-Click Urgent SOS Flare Button */}
+            <button
+              onClick={onOpenSOS}
+              className="px-6 py-3.5 rounded bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-wordmark text-lg uppercase tracking-wider transition-all duration-200 shadow-[0_0_25px_rgba(239,68,68,0.45)] hover:shadow-[0_0_40px_rgba(239,68,68,0.7)] cursor-pointer flex items-center space-x-2 animate-pulse"
+            >
+              <AlertOctagon size={18} />
+              <span>EMERGENCY SOS FLARE</span>
+            </button>
+
+            {/* Standard Message Button */}
             <button
               onClick={() => {
                 playSteamWhoosh();
                 onOpenChat();
               }}
-              className="px-7 py-3.5 rounded bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 text-[#080605] font-sans font-bold text-xs tracking-wider uppercase transition-all duration-200 shadow-[0_0_25px_rgba(217,119,6,0.35)] hover:shadow-[0_0_35px_rgba(245,158,11,0.55)] cursor-pointer flex items-center space-x-2.5 group"
+              className="px-6 py-3.5 rounded bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 text-[#080605] font-sans font-bold text-xs tracking-wider uppercase transition-all duration-200 shadow-[0_0_25px_rgba(217,119,6,0.3)] cursor-pointer flex items-center space-x-2"
             >
               <MessageSquare size={16} className="text-[#080605]" />
               <span>Reach Captain Chai</span>
             </button>
 
+            {/* Origin Link */}
             <button
               onClick={() => {
                 playGlassClink();
                 onScrollToOrigin();
               }}
-              className="px-5 py-3.5 rounded bg-[#130E0B] hover:bg-[#1C140F] border border-amber-950 hover:border-amber-800/50 text-stone-300 hover:text-amber-200 font-sans text-xs tracking-wider uppercase transition-colors flex items-center space-x-2 cursor-pointer"
+              className="px-4 py-3.5 rounded bg-[#130E0B] hover:bg-[#1C140F] border border-amber-950 hover:border-amber-800/50 text-stone-300 hover:text-amber-200 font-sans text-xs tracking-wider uppercase transition-colors flex items-center space-x-1.5 cursor-pointer"
             >
-              <span>The Secret Story</span>
+              <span>The Story</span>
               <ArrowDown size={13} className="text-amber-400/80" />
             </button>
           </motion.div>

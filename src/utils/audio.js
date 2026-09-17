@@ -1,7 +1,7 @@
-// Ambient Audio synthesis for Captain Chai (Subtle, cinematic, non-intrusive)
+// Ambient Audio synthesis for Captain Chai (Procedural Web Audio API)
 
 let audioCtx = null;
-let isSoundEnabled = true; // Enabled for atmospheric experience
+let isSoundEnabled = true;
 
 const getAudioContext = () => {
   if (!audioCtx && typeof window !== 'undefined') {
@@ -36,7 +36,7 @@ export const getSoundEnabled = () => {
   return true;
 };
 
-// Subtle atmospheric breath / steam wisp sound
+// 1. Subtle atmospheric breath / steam wisp sound
 export const playSteamWhoosh = () => {
   if (!isSoundEnabled) return;
   const ctx = getAudioContext();
@@ -73,7 +73,7 @@ export const playSteamWhoosh = () => {
   noise.stop(now + 0.5);
 };
 
-// Gentle tactile tumbler clink
+// 2. Gentle tactile tumbler clink
 export const playGlassClink = () => {
   if (!isSoundEnabled) return;
   const ctx = getAudioContext();
@@ -97,7 +97,7 @@ export const playGlassClink = () => {
   osc.stop(now + 0.2);
 };
 
-// Subtle message pop
+// 3. Subtle message pop
 export const playMessageTone = () => {
   if (!isSoundEnabled) return;
   const ctx = getAudioContext();
@@ -121,13 +121,13 @@ export const playMessageTone = () => {
   osc.stop(now + 0.1);
 };
 
-// Sincere confirmation chime
+// 4. Sincere confirmation chime
 export const playConfirmationChime = () => {
   if (!isSoundEnabled) return;
   const ctx = getAudioContext();
   if (!ctx) return;
 
-  const notes = [440, 554.37, 659.25]; // A4, C#5, E5
+  const notes = [440, 554.37, 659.25];
   notes.forEach((freq, idx) => {
     const now = ctx.currentTime + idx * 0.12;
     const osc = ctx.createOscillator();
@@ -147,7 +147,7 @@ export const playConfirmationChime = () => {
   });
 };
 
-// Resonant brass stall bell chime with warm harmonic decay
+// 5. Resonant brass stall bell chime
 export const playBrassBellChime = () => {
   if (!isSoundEnabled) return;
   const ctx = getAudioContext();
@@ -155,10 +155,10 @@ export const playBrassBellChime = () => {
 
   const now = ctx.currentTime;
   const harmonics = [
-    { freq: 880, gain: 0.14, decay: 2.2 },   // A5 fundamental
-    { freq: 1760, gain: 0.08, decay: 1.6 },  // 1st overtone
-    { freq: 2640, gain: 0.04, decay: 1.1 },  // 2nd overtone
-    { freq: 528, gain: 0.07, decay: 2.8 },   // Sub-harmonic body resonance
+    { freq: 880, gain: 0.14, decay: 2.2 },
+    { freq: 1760, gain: 0.08, decay: 1.6 },
+    { freq: 2640, gain: 0.04, decay: 1.1 },
+    { freq: 528, gain: 0.07, decay: 2.8 },
   ];
 
   harmonics.forEach(({ freq, gain: gLevel, decay }) => {
@@ -177,4 +177,43 @@ export const playBrassBellChime = () => {
     osc.start(now);
     osc.stop(now + decay);
   });
+};
+
+// 6. Hyper-velocity Kinetic Boom & Distress Pulse
+export const playEmergencyDistressPulse = () => {
+  if (!isSoundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+
+  // Sub-bass impact shockwave
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(140, now);
+  osc.frequency.exponentialRampToValueAtTime(32, now + 0.6);
+
+  gain.gain.setValueAtTime(0.35, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.7);
+
+  // High distress flare resonance
+  const flare = ctx.createOscillator();
+  const flareGain = ctx.createGain();
+  flare.type = 'sawtooth';
+  flare.frequency.setValueAtTime(980, now);
+  flare.frequency.exponentialRampToValueAtTime(440, now + 0.4);
+
+  flareGain.gain.setValueAtTime(0.08, now);
+  flareGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+
+  flare.connect(flareGain);
+  flareGain.connect(ctx.destination);
+  flare.start(now);
+  flare.stop(now + 0.5);
 };
